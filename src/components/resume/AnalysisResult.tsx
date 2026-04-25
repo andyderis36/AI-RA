@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Download } from 'lucide-react';
 import type { AIAnalysisResult } from '@/types/resume';
 
 // ─── Animated Counter ─────────────────────────────────────────────────────────
@@ -244,11 +245,62 @@ export function AnalysisResult({ result, isStreaming = false }: AnalysisResultPr
           )}
         </div>
         {result?.overallScore !== undefined && scoreLabel && (
-          <span className="rounded-xl border border-[oklch(0.65_0.25_270_/_0.25)] bg-[oklch(0.65_0.25_270_/_0.15)] px-3 py-1 text-sm font-medium text-[oklch(0.80_0.20_270)]">
-            {scoreLabel}
-          </span>
+          <div className="flex items-center gap-3 no-print">
+            <button
+              onClick={() => window.print()}
+              className="flex items-center gap-2 rounded-xl border border-[oklch(0.72_0.20_155_/_0.30)] bg-[oklch(0.72_0.20_155_/_0.12)] px-3 py-1.5 text-sm font-medium text-[oklch(0.75_0.18_155)] transition-all hover:bg-[oklch(0.72_0.20_155_/_0.20)]"
+            >
+              <Download className="h-4 w-4" />
+              Download PDF
+            </button>
+            <span className="rounded-xl border border-[oklch(0.65_0.25_270_/_0.25)] bg-[oklch(0.65_0.25_270_/_0.12)] px-3 py-1.5 text-sm font-medium text-[oklch(0.80_0.20_270)]">
+              {scoreLabel}
+            </span>
+          </div>
         )}
       </div>
+
+      {/* ── Print Styles ────────────────────────────────────────────── */}
+      <style jsx global>{`
+        @media print {
+          /* Hide non-essential UI */
+          header, footer, .no-print, button, #resume-drop-zone, .resume-history-section {
+            display: none !important;
+          }
+          
+          /* Reset background for clarity */
+          body {
+            background: white !important;
+            color: black !important;
+          }
+          
+          /* Ensure cards are visible but clean */
+          .rounded-3xl, .rounded-2xl {
+            border: 1px solid #e5e7eb !important;
+            background: white !important;
+            backdrop-filter: none !important;
+            box-shadow: none !important;
+            margin-bottom: 1rem;
+          }
+          
+          section {
+            margin-top: 0 !important;
+          }
+
+          h1, h2, h3, p, span {
+            color: black !important;
+          }
+
+          /* Grid adjustments for print */
+          .grid {
+            display: block !important;
+          }
+          .grid > div {
+            width: 100% !important;
+            page-break-inside: avoid;
+          }
+        }
+      `}</style>
 
       {/* ── Score + Summary ─────────────────────────────────────────────── */}
       <div className="flex flex-col items-center gap-6 rounded-3xl border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.15_0.02_270_/_0.60)] p-6 backdrop-blur-xl sm:flex-row">

@@ -370,6 +370,7 @@ export type HistoryResult = ActionResult<
     score: number | null;
     status: string;
     jobDescription?: string;
+    analysis?: AIAnalysisResult | null;
   }>
 >;
 
@@ -388,7 +389,7 @@ export async function getResumeHistoryAction(): Promise<HistoryResult> {
 
     const resumes = await Resume.find({ userId: user._id })
       .sort({ createdAt: -1 })
-      .select('_id fileName createdAt status analysis.overallScore jobDescription')
+      .select('_id fileName createdAt status analysis jobDescription')
       .lean();
 
     const formattedHistory = resumes.map((r: any) => ({
@@ -398,6 +399,7 @@ export async function getResumeHistoryAction(): Promise<HistoryResult> {
       score: r.analysis?.overallScore ?? null,
       status: r.status,
       jobDescription: r.jobDescription,
+      analysis: r.analysis,
     }));
 
     return { success: true, data: formattedHistory, error: null };
