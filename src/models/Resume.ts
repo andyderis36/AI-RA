@@ -12,6 +12,7 @@ export interface IResume {
     inputTokens: number;
     outputTokens: number;
   };
+  jobDescription?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +37,7 @@ const ResumeSchema = new Schema<IResume>(
       inputTokens: { type: Number, default: 0 },
       outputTokens: { type: Number, default: 0 },
     },
+    jobDescription: { type: String, default: null },
   },
   { timestamps: true }
 );

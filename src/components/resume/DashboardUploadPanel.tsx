@@ -23,7 +23,7 @@ type StreamableValue = import('@ai-sdk/rsc').StreamableValue<Partial<AIAnalysisR
 
 interface DashboardUploadPanelProps {
   uploadAction: (formData: FormData) => Promise<UploadResult>;
-  analyzeAction: (resumeId: string) => Promise<{ output: StreamableValue }>;
+  analyzeAction: (resumeId: string, jobDescription?: string) => Promise<{ output: StreamableValue }>;
 }
 
 export function DashboardUploadPanel({
@@ -51,10 +51,11 @@ export function DashboardUploadPanel({
     }
 
     const { _id: resumeId } = result.data;
+    const jobDescription = formData.get('jobDescription') as string | undefined;
 
     // Kick off streaming immediately in a transition (non-blocking)
     startTransition(() => {
-      void runStream(resumeId);
+      void runStream(resumeId, jobDescription);
     });
 
     // Return minimal ResumeDocument shape so uploader moves to 'analyzing'
@@ -73,12 +74,12 @@ export function DashboardUploadPanel({
   }
 
   // ─── Core streaming logic ────────────────────────────────────────────────
-  async function runStream(resumeId: string): Promise<void> {
+  async function runStream(resumeId: string, jobDescription?: string): Promise<void> {
     setIsStreaming(true);
     setAnalysisResult({});
 
     try {
-      const { output } = await analyzeAction(resumeId);
+      const { output } = await analyzeAction(resumeId, jobDescription);
 
       for await (const partial of readStreamableValue(output)) {
         if (partial) {
@@ -100,6 +101,7 @@ export function DashboardUploadPanel({
   // The uploader calls this after upload. We just wait for runStream to finish.
   async function analyzeAdapter(
     _resumeId: string,
+    _jobDescription?: string,
   ): Promise<{ result: AIAnalysisResult }> {
     // Wait for the streaming (started in uploadAdapter) to complete.
     // Use ref — not `isStreaming` state — to avoid stale closure reads.

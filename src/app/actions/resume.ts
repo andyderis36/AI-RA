@@ -110,6 +110,8 @@ export async function uploadResumeAction(
   try {
     // ── Extract file ──────────────────────────────────────
     const file = formData.get('file');
+    const jobDescription = formData.get('jobDescription') as string | null;
+
     if (!file || !(file instanceof File)) {
       return { success: false, data: null, error: 'No valid file provided.' };
     }
@@ -154,6 +156,7 @@ export async function uploadResumeAction(
       fileType: resolveFileType(file.type),
       status: 'pending',
       tokenUsage: { inputTokens: 0, outputTokens: 0 },
+      jobDescription: jobDescription || undefined,
     });
 
     // Link resume to user's resume list
@@ -202,6 +205,26 @@ Evaluation criteria:
 
 Be objective, professional, and constructive. Always return valid JSON matching the required schema.`;
 
+const getAnalyzerPrompt = (jobDescription?: string) => {
+  if (!jobDescription) return ANALYZER_SYSTEM_PROMPT;
+  
+  return `${ANALYZER_SYSTEM_PROMPT}
+
+IMPORTANT CONTEXT:
+The user has provided a Target Job Description. You MUST evaluate the resume against this job description.
+Job Description:
+"""
+${jobDescription}
+"""
+
+Instructions for keywordMatch:
+- Extract key requirements and skills from the Job Description.
+- Compare them against the skills and experience in the resume.
+- "matched": Array of keywords found in both.
+- "missing": Array of keywords in the JD that are missing from the resume.
+- "score": A calculated match percentage (0-100) based on how well the resume fits the JD.`;
+};
+
 /**
  * Server Action: Streams an AI resume analysis to the client.
  *  – Validates auth & ownership.
@@ -211,9 +234,10 @@ Be objective, professional, and constructive. Always return valid JSON matching 
  *  – On finish: atomically updates MongoDB with final result & token usage.
  *
  * @param resumeId – MongoDB ObjectId string of the resume to analyse.
+ * @param jobDescription – Optional target job description to match against.
  * @returns `{ output: StreamableValue }` – FE consumes via `readStreamableValue`.
  */
-export async function analyzeResumeStreamAction(resumeId: string) {
+export async function analyzeResumeStreamAction(resumeId: string, jobDescription?: string) {
   // ── Auth guard ────────────────────────────────────────────
   const { userId: clerkUserId } = await auth();
   if (!clerkUserId) {
@@ -276,7 +300,7 @@ export async function analyzeResumeStreamAction(resumeId: string) {
       const result = streamObject({
         model: resumeAnalyzerModel,
         schema: AIAnalysisResultSchema,
-        system: ANALYZER_SYSTEM_PROMPT,
+        system: getAnalyzerPrompt(jobDescription),
         messages: [
           {
             role: 'user',
@@ -345,4 +369,53 @@ export async function analyzeResumeStreamAction(resumeId: string) {
   })();
 
   return { output: stream.value };
+}
+
+// ============================================================
+// 3. getResumeHistoryAction
+// ============================================================
+
+export type HistoryResult = ActionResult<
+  Array<{
+    _id: string;
+    fileName: string;
+    createdAt: string;
+    score: number | null;
+    status: string;
+    jobDescription?: string;
+  }>
+>;
+
+export async function getResumeHistoryAction(): Promise<HistoryResult> {
+  const { userId: clerkUserId } = await auth();
+  if (!clerkUserId) {
+    return { success: false, data: null, error: 'Unauthorized' };
+  }
+
+  try {
+    await dbConnect();
+    const user = await User.findOne({ clerkId: clerkUserId });
+    if (!user) {
+      return { success: true, data: [], error: null };
+    }
+
+    const resumes = await Resume.find({ userId: user._id })
+      .sort({ createdAt: -1 })
+      .select('_id fileName createdAt status analysis.overallScore jobDescription')
+      .lean();
+
+    const formattedHistory = resumes.map((r: any) => ({
+      _id: r._id.toString(),
+      fileName: r.fileName,
+      createdAt: r.createdAt.toISOString(),
+      score: r.analysis?.overallScore ?? null,
+      status: r.status,
+      jobDescription: r.jobDescription,
+    }));
+
+    return { success: true, data: formattedHistory, error: null };
+  } catch (err) {
+    console.error('[getResumeHistoryAction] Error:', err);
+    return { success: false, data: null, error: 'Failed to fetch history' };
+  }
 }

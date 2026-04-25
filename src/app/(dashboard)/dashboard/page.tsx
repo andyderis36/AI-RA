@@ -4,6 +4,7 @@ import {
   uploadResumeAction,
   analyzeResumeStreamAction,
 } from '@/app/actions/resume';
+import { ResumeHistory } from '@/components/resume/ResumeHistory';
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -57,6 +58,9 @@ export default async function DashboardPage() {
             uploadAction={uploadResumeAction}
             analyzeAction={analyzeResumeStreamAction}
           />
+          
+          {/* History Section */}
+          <ResumeHistory />
         </main>
 
         {/* ── Informational Footer Cards ──────────────────────────────────── */}

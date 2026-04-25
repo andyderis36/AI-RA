@@ -38,7 +38,7 @@ interface ResumeUploaderProps {
   ) => void;
   /** Optional: Server Actions injected from parent (keeps component decoupled) */
   uploadAction?: (formData: FormData) => Promise<ResumeDocument>;
-  analyzeAction?: (resumeId: string) => Promise<{ result: AIAnalysisResult }>;
+  analyzeAction?: (resumeId: string, jobDescription?: string) => Promise<{ result: AIAnalysisResult }>;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -187,6 +187,7 @@ export function ResumeUploader({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [jobDescription, setJobDescription] = useState('');
   const [isPending, startTransition] = useTransition();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -230,6 +231,9 @@ export function ResumeUploader({
         try {
           const formData = new FormData();
           formData.append('file', file);
+          if (jobDescription.trim()) {
+            formData.append('jobDescription', jobDescription.trim());
+          }
           setUploadProgress(40);
           doc = await uploadAction(formData);
           setUploadProgress(100);
@@ -260,7 +264,7 @@ export function ResumeUploader({
 
       if (analyzeAction && doc) {
         try {
-          const { result } = await analyzeAction(doc._id);
+          const { result } = await analyzeAction(doc._id, jobDescription.trim() || undefined);
           setUploadState('completed');
           onAnalysisComplete?.(result, doc);
         } catch {
@@ -499,19 +503,42 @@ export function ResumeUploader({
             </div>
           )}
 
-          {/* Browse button (idle state) */}
+          {/* Browse button & Job Description (idle state) */}
           {uploadState === 'idle' && (
-            <button
-              type="button"
-              aria-label="Browse files to upload"
-              onClick={(e) => {
-                e.stopPropagation();
-                fileInputRef.current?.click();
-              }}
-              className="rounded-xl border border-[oklch(0.65_0.25_270_/_0.35)] bg-[oklch(0.65_0.25_270_/_0.15)] px-5 py-2 text-sm font-medium text-[oklch(0.75_0.20_270)] transition-all hover:border-[oklch(0.65_0.25_270_/_0.60)] hover:bg-[oklch(0.65_0.25_270_/_0.25)] hover:text-[oklch(0.90_0.20_270)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.65_0.25_270)] focus-visible:ring-offset-2 focus-visible:ring-offset-[oklch(0.12_0.03_270)]"
-            >
-              Browse files
-            </button>
+            <div className="flex w-full flex-col items-center gap-4">
+              <button
+                type="button"
+                aria-label="Browse files to upload"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                className="rounded-xl border border-[oklch(0.65_0.25_270_/_0.35)] bg-[oklch(0.65_0.25_270_/_0.15)] px-5 py-2 text-sm font-medium text-[oklch(0.75_0.20_270)] transition-all hover:border-[oklch(0.65_0.25_270_/_0.60)] hover:bg-[oklch(0.65_0.25_270_/_0.25)] hover:text-[oklch(0.90_0.20_270)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.65_0.25_270)] focus-visible:ring-offset-2 focus-visible:ring-offset-[oklch(0.12_0.03_270)]"
+              >
+                Browse files
+              </button>
+              
+              <div
+                className="w-full max-w-md"
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
+                <label
+                  htmlFor="jobDescription"
+                  className="mb-1.5 block text-left text-xs font-medium text-[oklch(0.70_0.02_270)]"
+                >
+                  Target Job Description (Optional)
+                </label>
+                <textarea
+                  id="jobDescription"
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  placeholder="Paste the job description here for contextual analysis..."
+                  className="w-full resize-none rounded-xl border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.12_0.03_270_/_0.6)] px-4 py-3 text-sm text-[oklch(0.90_0.02_270)] placeholder-[oklch(0.40_0.02_270)] transition-all focus:border-[oklch(0.65_0.25_270_/_0.60)] focus:bg-[oklch(0.12_0.03_270_/_0.8)] focus:outline-none focus:ring-1 focus:ring-[oklch(0.65_0.25_270_/_0.60)]"
+                  rows={3}
+                />
+              </div>
+            </div>
           )}
 
           {/* Reset button (completed / error) */}
