@@ -2,6 +2,7 @@ import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+import { del } from '@vercel/blob';
 
 import { dbConnect } from '@/lib/db';
 import { User } from '@/models/User';
@@ -101,11 +102,26 @@ export async function POST(req: Request) {
       const user = await User.findOne({ clerkId: id });
       
       if (user) {
-        // Optional: you could also delete blobs from Vercel Blob here using @vercel/blob `del()`
-        // For now, we only clean up MongoDB records.
+        // ── 1. Cleanup Vercel Blob storage ────────────────────────
+        const userResumes = await Resume.find({ userId: user._id }).select('fileUrl');
+        const urlsToDelete = userResumes
+          .map((r) => r.fileUrl)
+          .filter(Boolean);
+
+        if (urlsToDelete.length > 0) {
+          try {
+            await del(urlsToDelete);
+            console.log(`Webhook: Deleted ${urlsToDelete.length} blobs for user [${id}]`);
+          } catch (blobErr) {
+            console.error('Webhook: Failed to delete some blobs:', blobErr);
+          }
+        }
+
+        // ── 2. Cleanup MongoDB records ───────────────────────────
         await Resume.deleteMany({ userId: user._id });
         await User.findOneAndDelete({ clerkId: id });
-        console.log(`Webhook: User and associated resumes deleted from DB [${id}]`);
+        
+        console.log(`Webhook: User and associated records deleted from DB [${id}]`);
       }
     }
 

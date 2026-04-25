@@ -32,22 +32,21 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
-# project internal docs (sensitive)
-key_config.md
-implementation_plan.md
-implementation_plan.pdf
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# project internal docs (sensitive)
+key_config.md
+implementation_plan.md
 AGENTS.md
 AI Resume Analyzer Project Setup.md
 phase1_completion_report.md
-.gitignore
 be_status_report.md
 phase1&2_report.md
 phase2_tasks.md
@@ -55,3 +54,5 @@ phase3_tasks.md
 phase_report.md
 phase3_be_status.md
 phase3_fe_status.md
+phase_4_1_report.md
+flash_guide.md

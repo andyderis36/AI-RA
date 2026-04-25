@@ -1,5 +1,6 @@
 import { getResumeHistoryAction } from '@/app/actions/resume';
 import { formatDistanceToNow } from 'date-fns';
+import { DeleteResumeButton } from './DeleteResumeButton';
 
 export async function ResumeHistory() {
   const historyResult = await getResumeHistoryAction();
@@ -52,13 +53,22 @@ export async function ResumeHistory() {
               className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.15_0.02_270_/_0.40)] p-4 backdrop-blur-xl transition-all hover:bg-[oklch(0.20_0.03_270_/_0.50)]"
             >
               {/* Info */}
-              <div className="flex flex-col truncate">
-                <span className="truncate text-sm font-medium text-[oklch(0.90_0.02_270)]">
-                  {resume.fileName}
-                </span>
-                <span className="mt-1 text-xs text-[oklch(0.60_0.02_270)]">
-                  {formatDistanceToNow(new Date(resume.createdAt), { addSuffix: true })}
-                </span>
+              <div className="flex flex-1 items-center justify-between truncate">
+                <div className="flex flex-col truncate">
+                  <span className="truncate text-sm font-medium text-[oklch(0.90_0.02_270)]">
+                    {resume.fileName}
+                  </span>
+                  <span className="mt-1 text-xs text-[oklch(0.60_0.02_270)]">
+                    {formatDistanceToNow(new Date(resume.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                </div>
+                
+                {/* Delete Button (visible on hover) */}
+                <div className="ml-2 opacity-0 transition-opacity group-hover:opacity-100">
+                  <DeleteResumeButton resumeId={resume._id} />
+                </div>
               </div>
 
               {/* Score Ring / Status */}
