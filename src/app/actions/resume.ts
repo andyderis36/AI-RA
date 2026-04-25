@@ -1,10 +1,11 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import { put } from '@vercel/blob';
+import { put, get as getBlob } from '@vercel/blob';
 import { streamObject } from 'ai';
 import { createStreamableValue } from '@ai-sdk/rsc';
 import { z } from 'zod';
+import { Buffer } from 'node:buffer';
 
 import { dbConnect } from '@/lib/db';
 import { resumeAnalyzerModel } from '@/lib/ai';
@@ -131,7 +132,7 @@ export async function uploadResumeAction(
     const blob = await put(
       `resumes/${clerkUserId}/${Date.now()}-${file.name}`,
       file,
-      { access: 'public' },
+      { access: 'private' },
     );
 
     // ── DB: find/create user, create resume ───────────────
@@ -244,6 +245,31 @@ export async function analyzeResumeStreamAction(resumeId: string) {
   // ── Create streamable value for FE ────────────────────────
   const stream = createStreamableValue<Partial<AIAnalysisResult>>();
 
+  // ── Download the file for Gemini (uses Blob SDK's authenticated get for private stores) ──
+  let fileBuffer: Buffer;
+  try {
+    const blobResult = await getBlob(resume.fileUrl, { access: 'private' });
+    if (!blobResult || blobResult.statusCode !== 200) {
+      throw new Error('Blob not found or returned 304');
+    }
+    const chunks: Uint8Array[] = [];
+    const reader = blobResult.stream.getReader();
+    let done = false;
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      if (value) chunks.push(value);
+      done = readerDone;
+    }
+    fileBuffer = Buffer.concat(chunks);
+  } catch (dlErr) {
+    await Resume.findByIdAndUpdate(resumeId, { status: 'failed' });
+    throw new Error(
+      `Could not download resume file: ${
+        dlErr instanceof Error ? dlErr.message : 'Unknown error'
+      }`,
+    );
+  }
+
   // ── Kick off non-blocking AI streaming ────────────────────
   (async () => {
     try {
@@ -261,7 +287,7 @@ export async function analyzeResumeStreamAction(resumeId: string) {
               },
               {
                 type: 'file',
-                data: new URL(resume.fileUrl),
+                data: fileBuffer,
                 mediaType: toMimeType(resume.fileType),
               },
             ],

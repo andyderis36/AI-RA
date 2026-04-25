@@ -10,7 +10,7 @@ export const google = createGoogleGenerativeAI({
 
 /**
  * Default model for resume analysis.
- * gemini-2.5-flash-lite — Multimodal, cost-efficient.
- * Pricing: $0.25/1M input tokens, $1.50/1M output tokens
+ * gemini-2.5-flash — Multimodal, cost-efficient, stable.
+ * Supports native PDF/Image understanding.
  */
-export const resumeAnalyzerModel = google('gemini-2.5-flash-preview-05-20');
+export const resumeAnalyzerModel = google('gemini-2.5-flash');
