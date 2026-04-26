@@ -28,7 +28,7 @@ export function DeleteResumeButton({ resumeId }: DeleteResumeButtonProps) {
       disabled={isPending}
       onClick={handleDelete}
       aria-label="Delete resume"
-      className="flex h-8 w-8 items-center justify-center rounded-lg text-[oklch(0.45_0.02_270)] transition-all hover:bg-[oklch(0.65_0.25_25_/_0.15)] hover:text-[oklch(0.75_0.20_25)] disabled:opacity-50"
+      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[oklch(0.65_0.25_25_/_0.20)] bg-[oklch(0.65_0.25_25_/_0.05)] text-[oklch(0.65_0.20_25)] transition-all hover:bg-[oklch(0.65_0.25_25_/_0.25)] hover:border-[oklch(0.65_0.25_25_/_0.40)] hover:text-[oklch(0.75_0.20_25)] hover:shadow-[0_0_12px_oklch(0.65_0.25_25_/_0.2)] disabled:opacity-50"
     >
       {isPending ? (
         <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
