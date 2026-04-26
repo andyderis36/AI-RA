@@ -88,7 +88,7 @@ function ScoreRing({ score }: { score: number }) {
         >
           {animatedScore}
         </span>
-        <span className="text-xs font-medium text-[oklch(0.60_0.02_270)]">/100</span>
+        <span className="text-xs font-semibold text-[oklch(0.80_0.02_270)]">/100</span>
       </div>
     </div>
   );
@@ -162,11 +162,11 @@ function ListCard({
         s.border,
       ].join(' ')}
     >
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-widest text-[oklch(0.60_0.02_270)]">
+      <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-[oklch(0.85_0.02_270)]">
         {title}
       </h3>
       {items.length === 0 ? (
-        <p className="text-sm text-[oklch(0.50_0.02_270)]">{emptyText}</p>
+        <p className="text-sm font-medium text-[oklch(0.70_0.02_270)]">{emptyText}</p>
       ) : (
         <ul className="space-y-2" aria-label={title}>
           {items.map((item, i) => (
@@ -175,7 +175,7 @@ function ListCard({
                 aria-hidden="true"
                 className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${s.dot}`}
               />
-              <span className="text-sm leading-relaxed text-[oklch(0.82_0.01_270)]">
+              <span className="text-sm leading-relaxed text-[oklch(0.95_0.01_270)]">
                 {item}
               </span>
             </li>
@@ -311,11 +311,11 @@ export function AnalysisResult({ result, isStreaming = false }: AnalysisResultPr
           <div className="h-36 w-36 animate-pulse rounded-full bg-[oklch(0.20_0.03_270_/_0.50)]" aria-label="Score loading" />
         )}
         <div className="flex-1">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-[oklch(0.55_0.02_270)]">
+          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[oklch(0.80_0.02_270)]">
             AI Summary
           </p>
           {result?.summary ? (
-            <p className="text-sm leading-relaxed text-[oklch(0.82_0.01_270)]">
+            <p className="text-sm font-medium leading-relaxed text-[oklch(0.95_0.01_270)]">
               {result.summary}
             </p>
           ) : (
@@ -331,7 +331,7 @@ export function AnalysisResult({ result, isStreaming = false }: AnalysisResultPr
           )}
           {result?.experienceYears !== undefined &&
             result.experienceYears !== null && (
-              <p className="mt-3 text-xs text-[oklch(0.60_0.02_270)]">
+              <p className="mt-3 text-xs text-[oklch(0.85_0.02_270)]">
                 <span className="font-medium text-[oklch(0.75_0.02_270)]">
                   Experience:
                 </span>{' '}
@@ -340,7 +340,7 @@ export function AnalysisResult({ result, isStreaming = false }: AnalysisResultPr
               </p>
             )}
           {result?.educationLevel && (
-            <p className="mt-1 text-xs text-[oklch(0.60_0.02_270)]">
+            <p className="mt-1 text-xs text-[oklch(0.85_0.02_270)]">
               <span className="font-medium text-[oklch(0.75_0.02_270)]">
                 Education:
               </span>{' '}
@@ -354,7 +354,7 @@ export function AnalysisResult({ result, isStreaming = false }: AnalysisResultPr
       {result?.keywordMatch ? (
         <div className="rounded-2xl border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.15_0.02_270_/_0.55)] p-5 backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-[oklch(0.60_0.02_270)]">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-[oklch(0.85_0.02_270)]">
               Keyword Match
             </h3>
             <span className="text-sm font-semibold text-[oklch(0.80_0.20_270)]">
@@ -370,7 +370,7 @@ export function AnalysisResult({ result, isStreaming = false }: AnalysisResultPr
           </div>
           {result.keywordMatch.matched.length > 0 && (
             <div className="mb-3">
-              <p className="mb-1.5 text-xs text-[oklch(0.55_0.02_270)]">Matched</p>
+              <p className="mb-1.5 text-xs font-semibold text-[oklch(0.75_0.02_270)]">Matched</p>
               <div className="flex flex-wrap gap-1.5" aria-label="Matched keywords">
                 {result.keywordMatch.matched.map((kw) => (
                   <KeywordBadge key={kw} label={kw} variant="matched" />
@@ -380,7 +380,7 @@ export function AnalysisResult({ result, isStreaming = false }: AnalysisResultPr
           )}
           {result.keywordMatch.missing.length > 0 && (
             <div>
-              <p className="mb-1.5 text-xs text-[oklch(0.55_0.02_270)]">Missing</p>
+              <p className="mb-1.5 text-xs font-semibold text-[oklch(0.75_0.02_270)]">Missing</p>
               <div className="flex flex-wrap gap-1.5" aria-label="Missing keywords">
                 {result.keywordMatch.missing.map((kw) => (
                   <KeywordBadge key={kw} label={kw} variant="missing" />

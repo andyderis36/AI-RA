@@ -142,7 +142,7 @@ const STATE_CONFIG: Record<
   idle: {
     label: 'Drop your resume here',
     sublabel: 'PDF, DOCX, or Image · Max 10 MB',
-    iconColor: 'text-[oklch(0.65_0.25_270)]',
+    iconColor: 'text-[oklch(0.75_0.25_270)]',
     borderColor: 'border-[oklch(0.80_0.02_270_/_0.20)]',
     glowColor: '',
   },
@@ -170,7 +170,7 @@ const STATE_CONFIG: Record<
   error: {
     label: 'Something went wrong',
     sublabel: 'Please try again',
-    iconColor: 'text-[oklch(0.65_0.25_25)]',
+    iconColor: 'text-[oklch(0.75_0.25_25)]',
     borderColor: 'border-[oklch(0.65_0.25_25_/_0.40)]',
     glowColor: 'shadow-[0_0_40px_oklch(0.65_0.25_25_/_0.15)]',
   },
@@ -374,8 +374,9 @@ export function ResumeUploader({
         onKeyDown={handleKeyDown}
         onClick={() => uploadState === 'idle' && fileInputRef.current?.click()}
         className={[
-          'relative flex min-h-[280px] cursor-pointer flex-col items-center justify-center gap-5',
+          'relative flex w-full min-h-[340px] cursor-pointer flex-col items-center justify-center gap-6',
           'overflow-hidden rounded-3xl border-2 backdrop-blur-xl',
+          'p-8 sm:p-12', // Added padding so content is not squished to the borders
           'transition-all duration-500 ease-out',
           // Glassmorphism base
           'bg-[oklch(0.15_0.02_270_/_0.55)]',
@@ -421,7 +422,7 @@ export function ResumeUploader({
         />
 
         {/* Content */}
-        <div className="relative flex flex-col items-center gap-4 px-8 text-center">
+        <div className="relative flex w-full max-w-2xl flex-col items-center gap-6 px-4 sm:px-8 text-center">
           {/* Icon */}
           <div
             className={[
@@ -460,10 +461,10 @@ export function ResumeUploader({
 
           {/* Text */}
           <div>
-            <p className="text-lg font-semibold text-[oklch(0.95_0.01_270)]">
+            <p className="text-xl sm:text-2xl font-bold text-[oklch(0.95_0.01_270)]">
               {cfg.label}
             </p>
-            <p className="mt-1 text-sm text-[oklch(0.70_0.02_270)]">
+            <p className="mt-2 text-sm font-medium text-[oklch(0.85_0.02_270)]">
               {validationError ?? cfg.sublabel}
             </p>
           </div>
@@ -471,13 +472,13 @@ export function ResumeUploader({
           {/* Selected file info */}
           {selectedFile && uploadState !== 'idle' && (
             <div className="flex items-center gap-2 rounded-lg border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.20_0.03_270_/_0.40)] px-3 py-1.5">
-              <span className="text-xs font-medium text-[oklch(0.65_0.25_270)]">
+              <span className="text-xs font-semibold text-[oklch(0.85_0.20_270)]">
                 {fileTypeLabel(selectedFile.type)}
               </span>
-              <span className="text-xs text-[oklch(0.75_0.02_270)] max-w-[200px] truncate">
+              <span className="text-xs font-medium text-[oklch(0.90_0.02_270)] max-w-[200px] truncate">
                 {selectedFile.name}
               </span>
-              <span className="text-xs text-[oklch(0.55_0.02_270)]">
+              <span className="text-xs text-[oklch(0.75_0.02_270)]">
                 {formatBytes(selectedFile.size)}
               </span>
             </div>
@@ -497,7 +498,7 @@ export function ResumeUploader({
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
-              <p className="mt-1 text-right text-xs text-[oklch(0.55_0.02_270)]">
+              <p className="mt-1 text-right text-xs font-medium text-[oklch(0.75_0.02_270)]">
                 {uploadProgress}%
               </p>
             </div>
@@ -505,7 +506,7 @@ export function ResumeUploader({
 
           {/* Browse button & Job Description (idle state) */}
           {uploadState === 'idle' && (
-            <div className="flex w-full flex-col items-center gap-4">
+            <div className="flex w-full flex-col items-center gap-6 mt-2">
               <button
                 type="button"
                 aria-label="Browse files to upload"
@@ -513,19 +514,19 @@ export function ResumeUploader({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="rounded-xl border border-[oklch(0.65_0.25_270_/_0.35)] bg-[oklch(0.65_0.25_270_/_0.15)] px-5 py-2 text-sm font-medium text-[oklch(0.75_0.20_270)] transition-all hover:border-[oklch(0.65_0.25_270_/_0.60)] hover:bg-[oklch(0.65_0.25_270_/_0.25)] hover:text-[oklch(0.90_0.20_270)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.65_0.25_270)] focus-visible:ring-offset-2 focus-visible:ring-offset-[oklch(0.12_0.03_270)]"
+                className="rounded-xl border border-[oklch(0.65_0.25_270_/_0.50)] bg-[oklch(0.65_0.25_270_/_0.20)] px-5 py-2 text-sm font-semibold text-[oklch(0.85_0.15_270)] transition-all hover:border-[oklch(0.65_0.25_270_/_0.80)] hover:bg-[oklch(0.65_0.25_270_/_0.30)] hover:text-[oklch(0.95_0.10_270)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.65_0.25_270)] focus-visible:ring-offset-2 focus-visible:ring-offset-[oklch(0.12_0.03_270)]"
               >
                 Browse files
               </button>
               
               <div
-                className="w-full max-w-md"
+                className="w-full max-w-lg"
                 onClick={(e) => e.stopPropagation()}
                 onKeyDown={(e) => e.stopPropagation()}
               >
                 <label
                   htmlFor="jobDescription"
-                  className="mb-1.5 block text-left text-xs font-medium text-[oklch(0.70_0.02_270)]"
+                  className="mb-2 block text-left text-sm font-semibold text-[oklch(0.85_0.02_270)]"
                 >
                   Target Job Description (Optional)
                 </label>
@@ -534,8 +535,8 @@ export function ResumeUploader({
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
                   placeholder="Paste the job description here for contextual analysis..."
-                  className="w-full resize-none rounded-xl border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.12_0.03_270_/_0.6)] px-4 py-3 text-sm text-[oklch(0.90_0.02_270)] placeholder-[oklch(0.40_0.02_270)] transition-all focus:border-[oklch(0.65_0.25_270_/_0.60)] focus:bg-[oklch(0.12_0.03_270_/_0.8)] focus:outline-none focus:ring-1 focus:ring-[oklch(0.65_0.25_270_/_0.60)]"
-                  rows={3}
+                  className="w-full resize-none rounded-xl border border-[oklch(0.80_0.02_270_/_0.30)] bg-[oklch(0.12_0.03_270_/_0.8)] p-4 text-sm leading-relaxed text-[oklch(0.95_0.02_270)] placeholder-[oklch(0.65_0.02_270)] transition-all focus:border-[oklch(0.65_0.25_270_/_0.60)] focus:bg-[oklch(0.12_0.03_270_/_0.9)] focus:outline-none focus:ring-1 focus:ring-[oklch(0.65_0.25_270_/_0.60)]"
+                  rows={4}
                 />
               </div>
             </div>
@@ -546,7 +547,7 @@ export function ResumeUploader({
             <button
               type="button"
               onClick={handleReset}
-              className="rounded-xl border border-[oklch(0.80_0.02_270_/_0.20)] bg-[oklch(0.20_0.03_270_/_0.50)] px-5 py-2 text-sm font-medium text-[oklch(0.75_0.02_270)] transition-all hover:bg-[oklch(0.25_0.03_270_/_0.60)] hover:text-[oklch(0.90_0.01_270)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.65_0.25_270)]"
+              className="rounded-xl border border-[oklch(0.80_0.02_270_/_0.40)] bg-[oklch(0.25_0.03_270_/_0.60)] px-5 py-2 text-sm font-semibold text-[oklch(0.90_0.02_270)] transition-all hover:bg-[oklch(0.30_0.03_270_/_0.80)] hover:text-[oklch(0.95_0.01_270)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.65_0.25_270)]"
             >
               {uploadState === 'completed' ? 'Upload another' : 'Try again'}
             </button>

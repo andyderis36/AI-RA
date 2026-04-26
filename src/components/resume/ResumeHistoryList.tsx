@@ -36,7 +36,7 @@ export function ResumeHistoryList({ resumes }: ResumeHistoryListProps) {
 
   return (
     <div className="resume-history-section">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {resumes.map((resume) => {
           const score = resume.score ?? 0;
           const isCompleted = resume.status === 'completed';
@@ -67,25 +67,25 @@ export function ResumeHistoryList({ resumes }: ResumeHistoryListProps) {
               key={resume._id}
               onClick={() => handleOpenDetail(resume)}
               className={[
-                'group relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.15_0.02_270_/_0.40)] p-4 backdrop-blur-xl transition-all',
-                isCompleted ? 'cursor-pointer hover:bg-[oklch(0.20_0.03_270_/_0.50)] hover:border-[oklch(0.65_0.25_270_/_0.30)]' : 'cursor-default'
+                'group relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-[oklch(0.80_0.02_270_/_0.15)] bg-[oklch(0.15_0.02_270_/_0.40)] p-5 backdrop-blur-xl transition-all',
+                isCompleted ? 'cursor-pointer hover:bg-[oklch(0.20_0.03_270_/_0.50)] hover:border-[oklch(0.65_0.25_270_/_0.30)] hover:shadow-lg' : 'cursor-default'
               ].join(' ')}
             >
               {/* Info */}
               <div className="flex flex-1 items-center justify-between truncate">
                 <div className="flex flex-col truncate">
-                  <span className="truncate text-sm font-medium text-[oklch(0.90_0.02_270)]">
+                  <span className="truncate text-sm font-semibold text-[oklch(0.95_0.02_270)]">
                     {resume.fileName}
                   </span>
-                  <span className="mt-1 text-xs text-[oklch(0.60_0.02_270)]">
+                  <span className="mt-1 text-xs text-[oklch(0.70_0.02_270)] font-medium">
                     {formatDistanceToNow(new Date(resume.createdAt), {
                       addSuffix: true,
                     })}
                   </span>
                 </div>
                 
-                {/* Delete Button (visible on hover) */}
-                <div className="ml-2 opacity-0 transition-opacity group-hover:opacity-100" onClick={(e) => e.stopPropagation()}>
+                {/* Delete Button (always visible) */}
+                <div className="ml-2 transition-opacity opacity-80 hover:opacity-100" onClick={(e) => e.stopPropagation()}>
                   <DeleteResumeButton resumeId={resume._id} />
                 </div>
               </div>
