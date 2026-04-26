@@ -42,18 +42,4 @@ yarn-error.log*
 next-env.d.ts
 
 # project internal docs (sensitive)
-key_config.md
-implementation_plan.md
-AGENTS.md
-AI Resume Analyzer Project Setup.md
-phase1_completion_report.md
-be_status_report.md
-phase1&2_report.md
-phase2_tasks.md
-phase3_tasks.md
-phase_report.md
-phase3_be_status.md
-phase3_fe_status.md
-phase_4_1_report.md
-flash_guide.md
-phase_4_3_hotfix_report.md
+/technical_docs
