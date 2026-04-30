@@ -39,23 +39,49 @@ This project is built using a **Serverless Monolith** architecture optimized for
 
 ---
 
+## 📂 Folder Structure
+
+```text
+src/
+├── app/                  # Next.js App Router (Pages, Layouts, API, Actions)
+│   ├── (auth)/           # Authentication routes (Sign-in/Sign-up)
+│   ├── (dashboard)/      # Protected dashboard routes
+│   ├── actions/          # Server Actions (Business logic, AI calls, DB writes)
+│   └── api/              # API Route handlers (Webhooks, etc.)
+├── components/           # React Components
+│   ├── providers/        # Context Providers (QueryClient, Auth, etc.)
+│   ├── resume/           # Feature-specific components (Uploader, Results)
+│   └── ui/               # Reusable UI primitives (Buttons, Inputs)
+├── hooks/                # Custom React Hooks
+├── lib/                  # Shared utilities and SDK initializations (AI, DB)
+├── models/               # Mongoose schemas and models (User, Resume)
+├── types/                # Shared TypeScript interfaces and Zod schemas
+└── middleware.ts         # Clerk & Edge middleware
+```
+
+---
+
 ## 🛠️ Local Development Setup
 
 To run this project locally, follow these steps:
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/your-username/AI-RA-Project.git
 cd AI-RA-Project
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Environment Variables
+
 Create a `.env.local` file in the root directory and add the following keys:
+
 ```env
 # Clerk Auth
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
@@ -77,9 +103,11 @@ BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...
 ```
 
 ### 4. Run the Development Server
+
 ```bash
 npm run dev
 ```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ---
@@ -91,4 +119,3 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - **Zod Boundaries:** Upload limits (5MB Max) are validated strictly via schemas mapped natively inside Server Actions.
 
 ---
-*Crafted with precision by the AI-RA Tech Lead Agent.*
